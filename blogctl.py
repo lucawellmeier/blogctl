@@ -3,11 +3,12 @@
 import sys
 import argparse
 
-class Cli:
+class CLI:
     def __init__(self):
         parser = argparse.ArgumentParser(prog='blogctl', 
                 epilog='use "blogctl <command> -h" for details on a specific command')
-        parser.add_argument('command', help='available commands: TODO') #TODO
+        parser.add_argument('command', 
+                help='available commands: init, status, save, preview, publish')
         args = parser.parse_args(sys.argv[1:2])
 
         if not hasattr(self, args.command):
@@ -41,6 +42,6 @@ class Cli:
 
 if __name__ == '__main__':
     try:
-        Cli()
+        CLI()
     except Exception as e:
         print('error: ' + e.message)
