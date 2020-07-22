@@ -4,6 +4,7 @@ import sys
 import argparse
 
 from utils import CustomError
+from init_cmd import InitCommand
 
 class CLI:
     def __init__(self):
@@ -21,6 +22,7 @@ class CLI:
         parser = argparse.ArgumentParser(prog='blogctl init', 
                 description='initialize new blog with dummy files')
         parser.parse_args(args)
+        InitCommand()
 
     def save(self, args):
         parser = argparse.ArgumentParser(prog='blogctl save', 
