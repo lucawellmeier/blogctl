@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 class CustomError(Exception):
     def __init__(self, message):
@@ -13,3 +14,9 @@ def newfile(filename, content):
         raise CustomError('file ' + path + ' already exists')
     with open(path, 'w') as f:
         f.write(content)
+
+def git(args):
+    process = subprocess.Popen(['git'] + args, 
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+    return out, err

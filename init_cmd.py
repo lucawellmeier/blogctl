@@ -1,11 +1,13 @@
 import os
-from utils import newdir, newfile
+import subprocess
+from utils import newdir, newfile, git
 
 class InitCommand:
     def __init__(self):
-        self._createDirectoryStructure()
+        self._createBaseStructure()
+        self._pushToGit()
 
-    def _createDirectoryStructure(self):
+    def _createBaseStructure(self):
         newfile('config.json', '''{
     "blog_title": "My awesome blog",
     "articles_root": {
@@ -21,6 +23,7 @@ class InitCommand:
         ]
     }
 }''')
+        newfile('.gitignore', '''preview/''')
         newdir('templates')
         newfile('templates/base.html', '''<!DOCTYPE html>
 <html>
@@ -62,3 +65,6 @@ This is my personal tiny island in the ocean that is the world wide web.''')
 Well... This proves that directories work in this tool''')
         newdir('docs')
         newdir('preview')
+
+def _pushToGit(self):
+    git(['commit', '-a', '-m', '"setup blog file structure"'])
