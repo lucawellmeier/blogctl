@@ -19,4 +19,7 @@ def git(args):
     process = subprocess.Popen(['git'] + args, 
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
-    return out, err
+    if 'fatal' in err.decode():
+        raise CustomError('(from git) ' + err.decode())
+    else:
+        print(out.decode())

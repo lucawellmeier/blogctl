@@ -1,11 +1,17 @@
 import os
 import subprocess
-from utils import newdir, newfile, git
+from utils import CustomError, newdir, newfile, git
 
 class InitCommand:
-    def __init__(self):
+    def __init__(self, remote):
+        print('---> creating base structure')
         self._createBaseStructure()
-        self._pushToGit()
+        print('---> done')
+        
+        print('---> initial commit and push to server')
+        self._pushToGit(remote)
+        print('---> done')
+        print('blog successfully initialized')
 
     def _createBaseStructure(self):
         newfile('config.json', '''{
@@ -66,5 +72,10 @@ Well... This proves that directories work in this tool''')
         newdir('docs')
         newdir('preview')
 
-def _pushToGit(self):
-    git(['commit', '-a', '-m', '"setup blog file structure"'])
+    def _pushToGit(self, remote):
+        git(['init'])
+        git(['remote', 'add', 'origin', remote])
+        git(['pull', 'origin', 'master'])
+        git(['add', '.'])
+        git(['commit', '-m', '"setup blog file structure"'])
+        git(['push', '-u', 'origin', 'master'])

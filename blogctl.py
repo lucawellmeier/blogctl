@@ -21,8 +21,10 @@ class CLI:
     def init(self, args):
         parser = argparse.ArgumentParser(prog='blogctl init', 
                 description='initialize new blog with dummy files')
-        parser.parse_args(args)
-        InitCommand()
+        parser.add_argument('remote', 
+                help='link to your remote GitHub Pages repo')
+        initArgs = parser.parse_args(args)
+        InitCommand(initArgs.remote)
 
     def save(self, args):
         parser = argparse.ArgumentParser(prog='blogctl save', 
