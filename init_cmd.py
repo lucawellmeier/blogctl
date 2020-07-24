@@ -1,37 +1,34 @@
 import os
+import json
 import subprocess
 from utils import CustomError, newdir, newfile, git
+from preview_cmd import PreviewCommand
 
 class InitCommand:
     def __init__(self, remote):
         print('---> creating base structure')
         self._createBaseStructure()
         print('---> done')
-        
+
         print('---> initial commit and push to server')
         self._pushToGit(remote)
         print('---> done')
+
+        print('---> generating preview')
+        PreviewCommand()
+        print('---> done')
+
         print('blog successfully initialized')
 
     def _createBaseStructure(self):
-        newfile('config.json', '''{
-    "blog_title": "My awesome blog",
-    "articles_root": {
-        "dir": "articles",
-        "display_name": "Home",
-        "index_default_template": "templates/index.html",
-        "article_default_template": "templates/article.html",
-        "subdirs": [
-            {
-                "dir": "test",
-                "display_name": "Tests"
-            }
-        ]
-    }
-}''')
+        configDict = { 'blog_title': 'My awesome blog',
+                'url': 'https://dummy.example.com',
+                'article_template': 'article.template.html',
+                'home_template': 'home.template.html' }
+        newfile('config.json', json.dumps(configDict, indent=4))
         newfile('.gitignore', '''preview/''')
         newdir('templates')
-        newfile('templates/base.html', '''<!DOCTYPE html>
+        newfile('templates/base.template.html', '''<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -41,35 +38,27 @@ class InitCommand:
 {% block main %}{% endblock %}
 </body>
 </html>''')
-        newfile('templates/article.html', '''{% extends "templates/base.html" %}
+        newfile('templates/article.template.html', '''{% extends "base.template.html" %}
 {% block head %}
-<title> {{current_article.title}} | {{blogname}} </title>
+<title> {{article.title}} | {{blog.title}} </title>
 {% endblock %}
 {% block main %}
-{{ ['<a href="' + node.link + '">' + node.name + '</a>' for node in current_directory.path] | join(' &gt; ') }}
-{{content}}
+{{article.content}}
 {% endblock %}''')
-        newfile('templates/index.html', '''{% extends "templates/base.html" %}
+        newfile('templates/home.template.html', '''{% extends "base.template.html" %}
 {% block head %}
-<title> {{ (current_directory).title }} | {{blogname}} </title>
+<title> {{blog.title}} </title>
 {% endblock %}
 {% block main %}
-<h1> {{ (current_directory).title }} </h1>
-{% for subdir in current_directory.subdirs %}
-<a href="{{subdir.link}}">{{subdir.name}}</a>
-{% endfor %}
-<br>
-{% for article in articles %}
-{{article.last_change_date}} <a href="{{article.link}}">{{article.name}}</a>
+<h1> {{blog.title}} </h1>
+{% for article in blog.articles %}
+{{article.last_change}} <a href="{{article.url}}">{{article.title}}</a>
 {% endfor %}
 {% endblock %}''')
         newdir('articles')
         newfile('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
-        newdir('articles/test')
-        newfile('articles/test/directory_test.md', '''## Directory Test
-Well... This proves that directories work in this tool''')
-        newdir('docs')
+        newdir('export')
         newdir('preview')
 
     def _pushToGit(self, remote):
@@ -77,5 +66,5 @@ Well... This proves that directories work in this tool''')
         git(['remote', 'add', 'origin', remote])
         git(['pull', 'origin', 'master'])
         git(['add', '.'])
-        git(['commit', '-m', '"setup blog file structure"'])
+        git(['commit', '-m', '"initial commit"'])
         git(['push', '-u', 'origin', 'master'])
