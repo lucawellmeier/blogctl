@@ -1,8 +1,10 @@
 import os
+import re
+from datetime import datetime
 from html.parser import HTMLParser
 import markdown2
 from jinja2 import Environment, FileSystemLoader
-from utils import CustomError
+from utils import CustomError, git, dt_smart_formatter
 
 class HeadlineFinder(HTMLParser):
     def __init__(self, html):
@@ -27,16 +29,31 @@ class HeadlineFinder(HTMLParser):
         if self._foundHeadline and self._currentHeadlineType == tag:
             self.title = self._titleBuffer
 
-def findGitDatesFor(articleFile):
-    return '', ''
+def findGitChangesFor(article_file):
+    log = git(['log', '--follow', '--', article_file])
+    lines = log.splitlines(keepends=True)
 
-def findArticleMeta(articleFile, config):
+    commit_parts = []
+    for line in lines:
+        if re.match('^commit', line):
+            commit_parts.append([line])
+        elif len(commit_parts) > 0:
+            commit_parts[-1] += [line]
+
+    raw_date_lines = [commit[2] for commit in commit_parts if len(commit) >= 3]
+    stripped_date_lines = [re.match(r'^\s*Date:\s*(.+)\s*$', line).group(1) 
+            for line in raw_date_lines]
+    datetimes = sorted([datetime.strptime(datestr, '%c %z') for datestr in stripped_date_lines])
+    return [dt_smart_formatter(dt) for dt in datetimes]
+
+def findArticleMeta(article_file, config):
     articleMeta = {}
 
-    exportFilename = os.path.splitext(os.path.basename(articleFile))[0] + '.html'
+    exportFilename = os.path.splitext(os.path.basename(article_file))[0] + '.html'
+    articleMeta['path_to_home'] = '..'
     articleMeta['export_file'] = os.path.join('articles', exportFilename)
     articleMeta['url'] = os.path.join(config['url'], articleMeta['export_file'])
-    with open(articleFile, 'r') as f:
+    with open(article_file, 'r') as f:
         articleMeta['content'] = markdown2.markdown(f.read())
 
     headlineFinder = HeadlineFinder(articleMeta['content'])
@@ -44,7 +61,7 @@ def findArticleMeta(articleFile, config):
         raise CustomError('no headline found in article ' + articleFile)
     articleMeta['title'] = headlineFinder.title
 
-    articleMeta['published'], articleMeta['last_change'] = findGitDatesFor(articleFile)
+    articleMeta['changes'] = findGitChangesFor(article_file)
     return articleMeta
 
 def exportArticle(articleMeta, outputDir, config, blogInfo):
