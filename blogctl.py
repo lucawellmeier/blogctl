@@ -38,7 +38,6 @@ class CLI:
         parser = argparse.ArgumentParser(prog='blogctl preview', 
                 description='generate a preview of the current state')
         parser.parse_args(args)
-        SaveCommand()
         PreviewCommand()
 
     def publish(self, args):
