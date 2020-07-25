@@ -53,7 +53,7 @@ class InitCommand:
 {% block main %}
 <h1> {{blog.title}} </h1>
 {% for article in blog.articles %}
-{{article.changes[-1]}} <a href="{{article.url}}">{{article.title}}</a>
+<div> {{article.changes[-1]}} <a href="{{article.url}}">{{article.title}}</a> </div>
 {% endfor %}
 {% endblock %}''')
         newdir('articles')
