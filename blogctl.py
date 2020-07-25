@@ -7,6 +7,7 @@ from utils import CustomError
 from init_cmd import InitCommand
 from preview_cmd import PreviewCommand
 from save_cmd import SaveCommand
+from publish_cmd import PublishCommand
 
 class CLI:
     def __init__(self):
@@ -44,6 +45,7 @@ class CLI:
         parser = argparse.ArgumentParser(prog='blogctl publish', 
                 description='publish current state to the web')
         parser.parse_args(args)
+        PublishCommand()
 
     def status(self, args):
         parser = argparse.ArgumentParser(prog='blogctl status', 

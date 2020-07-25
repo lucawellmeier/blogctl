@@ -59,7 +59,7 @@ class InitCommand:
         newdir('articles')
         newfile('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
-        newdir('export')
+        newdir('www')
         newdir('preview')
 
     def _pushToGit(self, remote):
