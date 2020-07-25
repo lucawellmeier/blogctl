@@ -6,6 +6,7 @@ import argparse
 from utils import CustomError
 from init_cmd import InitCommand
 from preview_cmd import PreviewCommand
+from save_cmd import SaveCommand
 
 class CLI:
     def __init__(self):
@@ -31,11 +32,13 @@ class CLI:
         parser = argparse.ArgumentParser(prog='blogctl save', 
                 description='save changes to be published later')
         parser.parse_args(args)
+        SaveCommand()
 
     def preview(self, args):
         parser = argparse.ArgumentParser(prog='blogctl preview', 
                 description='generate a preview of the current state')
         parser.parse_args(args)
+        SaveCommand()
         PreviewCommand()
 
     def publish(self, args):

@@ -65,7 +65,7 @@ This is my personal tiny island in the ocean that is the world wide web.''')
     def _pushToGit(self, remote):
         git(['init'])
         git(['remote', 'add', 'origin', remote])
-        git(['pull', 'origin', 'master'])
+        git(['pull', '--allow-unrelated-history', 'origin', 'master'])
         git(['add', '.'])
         git(['commit', '-m', '"initial commit"'])
         git(['push', '-u', 'origin', 'master'])
