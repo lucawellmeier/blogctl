@@ -11,7 +11,7 @@ class InitCommand:
         print('---> done')
 
         print('---> initial commit and push to server')
-        self._pushToGit(remote)
+        self._freshBlogPush(remote)
         print('---> done')
 
         print('---> generating preview')
@@ -62,10 +62,15 @@ This is my personal tiny island in the ocean that is the world wide web.''')
         newdir('www')
         newdir('preview')
 
-    def _pushToGit(self, remote):
+    def _freshBlogPush(self, remote):
         git(['init'])
+        git(['add', '.gitignore'])
+        git(['commit', '-m', '"initial commit"'])
         git(['remote', 'add', 'origin', remote])
-        git(['pull', '--allow-unrelated-history', 'origin', 'master'])
+        git(['push', '-u', 'origin', 'master'])
+
+        git(['branch', 'dev'])
+        git(['checkout', 'dev'])
         git(['add', '.'])
         git(['commit', '-m', '"initial commit"'])
-        git(['push', '-u', 'origin', 'master'])
+        git(['push', '-u', 'origin', 'dev'])

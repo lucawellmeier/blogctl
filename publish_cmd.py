@@ -1,7 +1,7 @@
 import os
 import json
+from utils import cleardir, git, flatten
 from generate import generate
-from utils import cleardir
 from save_cmd import SaveCommand
 
 class PublishCommand:
@@ -11,4 +11,16 @@ class PublishCommand:
         config = json.load(open('config.json', 'r'))
         generate('www', config)
         print('---> done')
+
         SaveCommand()
+
+        print('---> pushing contents of www/ to master')
+        git(['checkout', 'master'])
+        cleardir(os.getcwd())
+        git(['checkout', 'dev', '--', 'www'])
+        flatten('www')
+        git(['add', '.'])
+        git(['commit', '-m', '"blogctl deploy"'])
+        git(['push', 'origin', 'master'])
+        git(['checkout', 'dev'])
+        print('---> done')
