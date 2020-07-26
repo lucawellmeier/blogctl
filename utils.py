@@ -42,6 +42,3 @@ def git(args):
     if 'fatal' in err.decode():
         raise CustomError('calling git command "' + ' '.join(args) + '":\n' + err.decode())
     return out.decode()
-
-def dt_smart_formatter(dt):
-    return dt.strftime('%c')
