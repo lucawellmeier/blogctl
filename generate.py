@@ -46,13 +46,13 @@ def findGitChangesFor(article_file):
     datetimes = sorted([datetime.strptime(datestr, '%c %z') for datestr in stripped_date_lines])
     return [dt.strftime('%c %Z') for dt in datetimes]
 
-def findArticleMeta(article_file, category_tree, config):
+def findArticleMeta(article_file, category, config):
     articleMeta = {}
 
-    articleMeta['category_tree'] = category_tree
-    articleMeta['path_to_root'] = '/'.join((1 + len(articleMeta['category_tree'])) * ['..'])
+    articleMeta['category_name'] = category['name']
+    articleMeta['path_to_root'] = '/'.join(len(articleMeta['category_name'].split('/')) * ['..'])
     articleMeta['export_file'] = os.path.splitext(article_file)[0] + '.html'
-    articleMeta['url'] = os.path.join(config['url'], articleMeta['export_file'])
+    articleMeta['path_from_root'] = articleMeta['export_file']
     with open(os.path.join(article_file), 'r') as f:
         articleMeta['content'] = markdown2.markdown(f.read())
 
@@ -64,41 +64,75 @@ def findArticleMeta(article_file, category_tree, config):
     articleMeta['changes'] = findGitChangesFor(article_file)
     return articleMeta
 
-def exportArticle(articleMeta, outputDir, config, blogInfo):
+def exportArticle(articleMeta, outputDir, config, blogInfo, tools):
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader)
     template = env.get_template(config['article_template'])
-    html = template.render(blog=blogInfo, article=articleMeta)
+    html = template.render(blog=blogInfo, tools=tools, article=articleMeta, category=tools['getcat'](articleMeta['category_name']))
     
     path = os.path.join(outputDir, articleMeta['export_file'])
-    print(path)
     os.makedirs(os.path.split(path)[0], exist_ok=True)
     with open(path, 'w') as f:
         f.write(html)
 
-def exportHome(outputDir, config, blogInfo):
+def exportCategoryIndex(categoryMeta, outputDir, config, blogInfo, tools):
+    file_loader = FileSystemLoader('templates')
+    env = Environment(loader=file_loader)
+    template = env.get_template(config['index_template'])
+    html = template.render(category=categoryMeta, blog=blogInfo, tools=tools)
+
+    path = os.path.join(outputDir, categoryMeta['path_from_root'], 'index.html')
+    os.makedirs(os.path.split(path)[0], exist_ok=True)
+    with open(path, 'w') as f:
+        f.write(html)
+
+def exportHome(outputDir, config, blogInfo, tools):
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader)
     template = env.get_template(config['home_template'])
-    html = template.render(blog=blogInfo)
+    html = template.render(blog=blogInfo, tools=tools)
 
     path = os.path.join(outputDir, 'index.html')
     with open(path, 'w') as f:
         f.write(html)
 
+def find_single_category_meta(cat_name, all_cat_names, config):
+    meta = {}
+    meta['name'] = cat_name
+    meta['display_name'] = config[meta['name']]['display_name'] if 'name' in config and 'display_name' in config['name'] else meta['name']
+
+    parts = cat_name.split('/')
+    meta['path_to_root'] = '/'.join((len(parts)) * ['..'])
+    meta['path_from_root'] = meta['name']
+
+    meta['parents'] = []
+    for i in range(0, len(parts) - 1):
+        meta['parents'].append('/'.join(parts[0:i + 1]))
+
+    meta['children'] = []
+    for other in all_cat_names:
+        if other.startswith(cat_name) and len(other.split('/')) == len(parts) + 1:
+            meta['children'].append(other)
+
+    return meta
+
 def generate(outputDir, config):
+    all_cat_names = []
+    for root, dirs, files in os.walk('articles'):
+        if root not in all_cat_names:
+            all_cat_names.append(root)
+
     categories = []
     articles = []
     for root, dirs, files in os.walk('articles'):
         for f in files:
             if os.path.splitext(f)[1] == '.md':
+                category = find_single_category_meta(root, all_cat_names, config)
+                if category['name'] not in [c['name'] for c in categories]:
+                    categories.append(category)
+
                 path = os.path.join(root, f)
-                categoryPart = re.match(r'articles.(.+)', path).group(1)
-                localCategoryTree = categoryPart.split('/')[:-1]
-                for i in range(1, len(localCategoryTree)):
-                    localCategoryTree[i] = '/'.join(localCategoryTree[i-1:i+1])
-                categories.extend([category for category in localCategoryTree if category not in categories])
-                meta = findArticleMeta(path, localCategoryTree, config)
+                meta = findArticleMeta(path, category, config)
                 articles.append(meta)
 
     blogInfo = {}
@@ -107,6 +141,12 @@ def generate(outputDir, config):
     blogInfo['articles'] = articles
     blogInfo['categories'] = categories
 
+    tools = {}
+    tools['getcat'] = lambda name : [c for c in categories if c['name'] == name][0]
+    tools['getartsforcat'] = lambda cat : [a for a in articles if a['category_name'].startswith(cat['name'])]
+
     for article in articles:
-        exportArticle(article, outputDir, config, blogInfo)
-    exportHome(outputDir, config, blogInfo)
+        exportArticle(article, outputDir, config, blogInfo, tools)
+    for category in categories:
+        exportCategoryIndex(category, outputDir, config, blogInfo, tools)
+    exportHome(outputDir, config, blogInfo, tools)
