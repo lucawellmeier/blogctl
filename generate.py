@@ -4,7 +4,7 @@ from datetime import datetime
 from html.parser import HTMLParser
 import markdown2
 from jinja2 import Environment, FileSystemLoader
-from utils import CustomError, git, dt_smart_formatter
+from utils import CustomError, git
 
 class HeadlineFinder(HTMLParser):
     def __init__(self, html):
@@ -44,16 +44,16 @@ def findGitChangesFor(article_file):
     stripped_date_lines = [re.match(r'^\s*Date:\s*(.+)\s*$', line).group(1) 
             for line in raw_date_lines]
     datetimes = sorted([datetime.strptime(datestr, '%c %z') for datestr in stripped_date_lines])
-    return [dt_smart_formatter(dt) for dt in datetimes]
+    return [dt.strftime('%c %Z') for dt in datetimes]
 
-def findArticleMeta(article_file, config):
+def findArticleMeta(article_file, category_tree, config):
     articleMeta = {}
 
-    exportFilename = os.path.splitext(os.path.basename(article_file))[0] + '.html'
-    articleMeta['path_to_home'] = '..'
-    articleMeta['export_file'] = os.path.join('articles', exportFilename)
+    articleMeta['category_tree'] = category_tree
+    articleMeta['path_to_root'] = '/'.join((1 + len(articleMeta['category_tree'])) * ['..'])
+    articleMeta['export_file'] = os.path.splitext(article_file)[0] + '.html'
     articleMeta['url'] = os.path.join(config['url'], articleMeta['export_file'])
-    with open(article_file, 'r') as f:
+    with open(os.path.join(article_file), 'r') as f:
         articleMeta['content'] = markdown2.markdown(f.read())
 
     headlineFinder = HeadlineFinder(articleMeta['content'])
@@ -71,6 +71,7 @@ def exportArticle(articleMeta, outputDir, config, blogInfo):
     html = template.render(blog=blogInfo, article=articleMeta)
     
     path = os.path.join(outputDir, articleMeta['export_file'])
+    print(path)
     os.makedirs(os.path.split(path)[0], exist_ok=True)
     with open(path, 'w') as f:
         f.write(html)
@@ -86,15 +87,25 @@ def exportHome(outputDir, config, blogInfo):
         f.write(html)
 
 def generate(outputDir, config):
-    ls = os.listdir('articles')
-    files = [os.path.join('articles', f) for f in os.listdir('articles')]
-    articleFiles = [f for f in files if os.path.isfile(f) and os.path.splitext(f)[1] == '.md']
-    articles = [findArticleMeta(f, config) for f in articleFiles]
+    categories = []
+    articles = []
+    for root, dirs, files in os.walk('articles'):
+        for f in files:
+            if os.path.splitext(f)[1] == '.md':
+                path = os.path.join(root, f)
+                categoryPart = re.match(r'articles.(.+)', path).group(1)
+                localCategoryTree = categoryPart.split('/')[:-1]
+                for i in range(1, len(localCategoryTree)):
+                    localCategoryTree[i] = '/'.join(localCategoryTree[i-1:i+1])
+                categories.extend([category for category in localCategoryTree if category not in categories])
+                meta = findArticleMeta(path, localCategoryTree, config)
+                articles.append(meta)
 
     blogInfo = {}
     blogInfo['title'] = config['blog_title']
     blogInfo['url'] = config['url']
     blogInfo['articles'] = articles
+    blogInfo['categories'] = categories
 
     for article in articles:
         exportArticle(article, outputDir, config, blogInfo)

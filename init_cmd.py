@@ -43,7 +43,7 @@ class InitCommand:
 <title> {{article.title}} | {{blog.title}} </title>
 {% endblock %}
 {% block main %}
-<a href="{{article.path_to_home}}/index.html">back to home</a>
+<a href="{{article.path_to_root}}/index.html">back to home</a>
 {{article.content}}
 {% endblock %}''')
         newfile('templates/home.template.html', '''{% extends "base.template.html" %}
