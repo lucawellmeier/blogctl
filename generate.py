@@ -51,6 +51,7 @@ def findArticleMeta(article_file, category, config):
 
     articleMeta['category_name'] = category['name']
     articleMeta['path_to_root'] = '/'.join(len(articleMeta['category_name'].split('/')) * ['..'])
+    articleMeta['path_to_assets'] = os.path.join(articleMeta['path_to_root'], 'assets')
     articleMeta['export_file'] = os.path.splitext(article_file)[0] + '.html'
     articleMeta['path_from_root'] = articleMeta['export_file']
     with open(os.path.join(article_file), 'r') as f:
@@ -103,6 +104,7 @@ def find_single_category_meta(cat_name, all_cat_names, config):
 
     parts = cat_name.split('/')
     meta['path_to_root'] = '/'.join((len(parts)) * ['..'])
+    meta['path_to_assets'] = os.path.join(meta['path_to_root'], 'assets')
     meta['path_from_root'] = meta['name']
 
     meta['parents'] = []
@@ -145,6 +147,13 @@ def generate(outputDir, config):
     tools['getcat'] = lambda name : [c for c in categories if c['name'] == name][0]
     tools['getartsforcat'] = lambda cat : [a for a in articles if a['category_name'].startswith(cat['name'])]
 
+    for root, dirs, files in os.walk('assets'):
+        for f in files:
+            src = os.path.join(root, f)
+            destDir = os.path.join(outputDir, root)
+            dest = os.path.join(destDir, f)
+            os.makedirs(os.path.join(destDir), exist_ok=True)
+            shutil.copyfile(src, dest)
     for article in articles:
         exportArticle(article, outputDir, config, blogInfo, tools)
     for category in categories:
