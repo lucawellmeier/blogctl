@@ -56,6 +56,7 @@ class InitCommand:
 <div> {{article.changes[-1]}} <a href="{{article.url}}">{{article.title}}</a> </div>
 {% endfor %}
 {% endblock %}''')
+        newdir('assets')
         newdir('articles')
         newfile('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
