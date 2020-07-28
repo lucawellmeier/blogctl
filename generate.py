@@ -1,4 +1,5 @@
 import os
+import shutil
 import re
 from datetime import datetime
 from html.parser import HTMLParser
@@ -49,9 +50,7 @@ def findGitChangesFor(article_file):
 def findArticleMeta(article_file, category, config):
     articleMeta = {}
 
-    articleMeta['category_name'] = category['name']
-    articleMeta['path_to_root'] = '/'.join(len(articleMeta['category_name'].split('/')) * ['..'])
-    articleMeta['path_to_assets'] = os.path.join(articleMeta['path_to_root'], 'assets')
+    articleMeta['category'] = category
     articleMeta['export_file'] = os.path.splitext(article_file)[0] + '.html'
     articleMeta['path_from_root'] = articleMeta['export_file']
     with open(os.path.join(article_file), 'r') as f:
@@ -68,8 +67,18 @@ def findArticleMeta(article_file, category, config):
 def exportArticle(articleMeta, outputDir, config, blogInfo, tools):
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader)
+    env.globals['blog'] = blogInfo
+    env.globals['tools'] = tools
+    env.globals['category'] = articleMeta['category']
+    env.globals['article'] = articleMeta
+
+    parts = articleMeta['category']['name'].split('/')
+    env.globals['path_to_root'] = '/'.join((len(parts)) * ['..'])
+    env.globals['path_to_assets'] = os.path.join(env.globals['path_to_root'], 'assets')
+    env.globals['path_from_root'] = articleMeta['export_file']
+
     template = env.get_template(config['article_template'])
-    html = template.render(blog=blogInfo, tools=tools, article=articleMeta, category=tools['getcat'](articleMeta['category_name']))
+    html = template.render()
     
     path = os.path.join(outputDir, articleMeta['export_file'])
     os.makedirs(os.path.split(path)[0], exist_ok=True)
@@ -79,8 +88,16 @@ def exportArticle(articleMeta, outputDir, config, blogInfo, tools):
 def exportCategoryIndex(categoryMeta, outputDir, config, blogInfo, tools):
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader)
+    env.globals['blog'] = blogInfo
+    env.globals['tools'] = tools
+    env.globals['category'] = categoryMeta
+
+    parts = categoryMeta['name'].split('/')
+    env.globals['path_to_root'] = '/'.join((len(parts)) * ['..'])
+    env.globals['path_to_assets'] = os.path.join(env.globals['path_to_root'], 'assets')
+
     template = env.get_template(config['index_template'])
-    html = template.render(category=categoryMeta, blog=blogInfo, tools=tools)
+    html = template.render()
 
     path = os.path.join(outputDir, categoryMeta['path_from_root'], 'index.html')
     os.makedirs(os.path.split(path)[0], exist_ok=True)
@@ -90,8 +107,12 @@ def exportCategoryIndex(categoryMeta, outputDir, config, blogInfo, tools):
 def exportHome(outputDir, config, blogInfo, tools):
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader)
+    env.globals['blog'] = blogInfo
+    env.globals['tools'] = tools
+    env.globals['path_to_root'] = '.'
+    env.globals['path_to_assets'] = os.path.join(env.globals['path_to_root'], 'assets')
     template = env.get_template(config['home_template'])
-    html = template.render(blog=blogInfo, tools=tools)
+    html = template.render()
 
     path = os.path.join(outputDir, 'index.html')
     with open(path, 'w') as f:
@@ -101,13 +122,10 @@ def find_single_category_meta(cat_name, all_cat_names, config):
     meta = {}
     meta['name'] = cat_name
     meta['display_name'] = config[meta['name']]['display_name'] if 'name' in config and 'display_name' in config['name'] else meta['name']
-
-    parts = cat_name.split('/')
-    meta['path_to_root'] = '/'.join((len(parts)) * ['..'])
-    meta['path_to_assets'] = os.path.join(meta['path_to_root'], 'assets')
-    meta['path_from_root'] = meta['name']
+    meta['path_from_root'] = cat_name
 
     meta['parents'] = []
+    parts = cat_name.split('/')
     for i in range(0, len(parts) - 1):
         meta['parents'].append('/'.join(parts[0:i + 1]))
 
@@ -145,7 +163,7 @@ def generate(outputDir, config):
 
     tools = {}
     tools['getcat'] = lambda name : [c for c in categories if c['name'] == name][0]
-    tools['getartsforcat'] = lambda cat : [a for a in articles if a['category_name'].startswith(cat['name'])]
+    tools['getartsforcat'] = lambda cat : [a for a in articles if a['category']['name'].startswith(cat['name'])]
 
     for root, dirs, files in os.walk('assets'):
         for f in files:
