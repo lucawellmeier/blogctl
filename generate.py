@@ -67,15 +67,19 @@ def findArticleMeta(article_file, category, config):
 def exportArticle(articleMeta, outputDir, config, blogInfo, tools):
     file_loader = FileSystemLoader('templates')
     env = Environment(loader=file_loader)
+
     env.globals['blog'] = blogInfo
     env.globals['tools'] = tools
     env.globals['category'] = articleMeta['category']
-    env.globals['article'] = articleMeta
 
     parts = articleMeta['category']['name'].split('/')
     env.globals['path_to_root'] = '/'.join((len(parts)) * ['..'])
     env.globals['path_to_assets'] = os.path.join(env.globals['path_to_root'], 'assets')
     env.globals['path_from_root'] = articleMeta['export_file']
+
+    env.globals['article_content'] = env.from_string(articleMeta['content']).render()
+    del articleMeta['content']
+    env.globals['article'] = articleMeta
 
     template = env.get_template(config['article_template'])
     html = template.render()
