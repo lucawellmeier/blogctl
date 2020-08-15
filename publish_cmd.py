@@ -1,22 +1,22 @@
 import os
 import json
-from utils import cleardir, git, flatten
-from generate import generate
+from utils import clear_dir, git, flatten
+from generate import generate_html
 from save_cmd import SaveCommand
 
 class PublishCommand:
     def __init__(self):
         print('---> generating blog to www/ directory')
-        cleardir('www')
+        clear_dir('www')
         config = json.load(open('config.json', 'r'))
-        generate('www', config)
+        generate_html(config, 'www')
         print('---> done')
 
         SaveCommand()
 
         print('---> pushing contents of www/ to master')
         git(['checkout', 'master'])
-        cleardir(os.getcwd())
+        clear_dir(os.getcwd())
         git(['checkout', 'dev', '--', 'www'])
         flatten('www')
         git(['add', '.'])

@@ -1,12 +1,12 @@
 import os
 import json
-from generate import generate
-from utils import cleardir
+from generate import generate_html
+from utils import clear_dir
 
 class PreviewCommand:
     def __init__(self):
         os.makedirs('preview', exist_ok=True)
-        cleardir('preview')
+        clear_dir('preview')
         config = json.load(open('config.json', 'r'))
-        config['url'] = ''
-        generate('preview', config)
+        config['url'] = 'file:///' + os.getcwd() + '/preview'
+        generate_html(config, 'preview')

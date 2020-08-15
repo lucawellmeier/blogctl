@@ -3,7 +3,7 @@
 import sys
 import argparse
 
-from utils import CustomError
+from utils import BlogError
 from init_cmd import InitCommand
 from clone_cmd import CloneCommand
 from preview_cmd import PreviewCommand
@@ -19,7 +19,7 @@ class CLI:
         args = parser.parse_args(sys.argv[1:2])
 
         if not hasattr(self, args.command):
-            raise CustomError('unknown command "' + args.command + '"')
+            raise BlogError('unknown command "' + args.command + '"')
         getattr(self, args.command)(sys.argv[2:])
 
     def init(self, args):
@@ -64,5 +64,5 @@ class CLI:
 if __name__ == '__main__':
     try:
         CLI()
-    except CustomError as e:
+    except BlogError as e:
         print('error: ' + e.message)
