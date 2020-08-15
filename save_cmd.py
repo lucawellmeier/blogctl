@@ -5,6 +5,6 @@ class SaveCommand:
         print('---> saving to github')
         git(['pull', '--allow-unrelated-history', 'origin', 'dev'])
         git(['add', '.'])
-        git(['commit', '-m', 'blogctl save'])
+        git(['commit', '-m', 'octoblog-save'])
         git(['push', 'origin', 'dev'])
         print('---> done')

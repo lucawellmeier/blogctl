@@ -20,7 +20,7 @@ class PublishCommand:
         git(['checkout', 'dev', '--', 'www'])
         flatten('www')
         git(['add', '.'])
-        git(['commit', '-m', '"blogctl deploy"'])
+        git(['commit', '-m', '"octoblog-publish"'])
         git(['push', 'origin', 'master'])
         git(['checkout', 'dev'])
         print('---> done')
