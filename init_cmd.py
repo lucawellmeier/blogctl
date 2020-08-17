@@ -24,7 +24,7 @@ class InitCommand:
     def _create_base_structure(self):
         config = { 'blog_title': 'My awesome blog',
             'url': 'https://[YOUR_USERNAME].github.io',
-            'home_template': 'home.template.html' 
+            'home_template': 'home.template.html',
             'article_template': 'article.template.html',
             'index_template': 'index.template.html',
 
@@ -44,15 +44,15 @@ This is my personal tiny island in the ocean that is the world wide web.''')
         # copy default files from script execution dir
         defaults_dir = os.path.join(os.path.dirname(__file__), 'default')
         new_dir('templates')
-        shutil.copyfile(os.path.join(defaults_dir, 'templates', 'base.template.html'), 'templates')
-        shutil.copyfile(os.path.join(defaults_dir, 'templates', 'parent_tree.template.html'), 'templates')
-        shutil.copyfile(os.path.join(defaults_dir, 'templates', 'list_of_articles.template.html'), 'templates')
-        shutil.copyfile(os.path.join(defaults_dir, 'templates', 'home.template.html'), 'templates')
-        shutil.copyfile(os.path.join(defaults_dir, 'templates', 'article.template.html'), 'templates')
-        shutil.copyfile(os.path.join(defaults_dir, 'templates', 'index.template.html'), 'templates')
+        shutil.copy(os.path.join(defaults_dir, 'templates', 'base.template.html'), 'templates')
+        shutil.copy(os.path.join(defaults_dir, 'templates', 'parent_tree.template.html'), 'templates')
+        shutil.copy(os.path.join(defaults_dir, 'templates', 'list_of_articles.template.html'), 'templates')
+        shutil.copy(os.path.join(defaults_dir, 'templates', 'home.template.html'), 'templates')
+        shutil.copy(os.path.join(defaults_dir, 'templates', 'article.template.html'), 'templates')
+        shutil.copy(os.path.join(defaults_dir, 'templates', 'index.template.html'), 'templates')
         
         new_dir('assets')
-        shutil.copyfile(os.path.join(defaults_dir, 'assets', 'style.css'), 'assets')
+        shutil.copy(os.path.join(defaults_dir, 'assets', 'style.css'), 'assets')
         
     def _fresh_blog_push(self, remote):
         git(['init'])

@@ -5,14 +5,21 @@
 {% endblock %}
 
 {% block main %}
-{% include "parent_tree.template.html" with obj=this %}
+
+{% with obj=this %}
+{% include "parent_tree.template.html" %}
+{% endwith %}
 
 <h1> Category: {{this.display_name}} </h1>
+
 <h3> Sub-categories: </h3>
 {% for child in children_of(this) %}
 <a href="{{this.root_dir}}/{{child.link}}">{{child.display_name}}</a> <br>
 {% endfor %}
 
 <h3> Articles: </h3>
-{% include "list_of_articles.template.html" with articles=find_articles_in(this) %}
+{% with articles=find_articles_in(this) %}
+{% include "list_of_articles.template.html" %}
+{% endwith %}
+
 {% endblock %}

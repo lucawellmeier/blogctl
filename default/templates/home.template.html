@@ -6,12 +6,11 @@
 
 {% block main %}
 
-<div class="blog-title"> {{blog_title}} </div>
+<p>
+This is your personal tiny island in the gigantic ocean that is the world wide web.
+</p>
 
-<div class="blog-description">
-	This is my personal tiny island in the giant ocean that is the world wide web.
-</div>
-
-{% include "list_of_articles.template.html" with list_of_articles=articles %}
+<h3> Articles </h3>
+{% include "list_of_articles.template.html" %}
 
 {% endblock %}

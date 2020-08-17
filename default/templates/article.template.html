@@ -5,6 +5,13 @@
 {% endblock %}
 
 {% block main %}
-{% include "parent_tree.template.html" with obj=this %}
+
+{% with obj=this %}
+{% include "parent_tree.template.html" %}
+{% endwith %}
+
+<article>
 {{this.content}}
+</article>
+
 {% endblock %}

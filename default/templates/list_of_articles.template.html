@@ -5,7 +5,9 @@
 	published <span class="short-datetime">{{article.changes[0].date}}</span> 
 	(last change: <span class="short-datetime">{{article.changes[-1].date}}</span>
 	in 
-	{% include "parent_tree.template.html" with obj=article %}
+	{% with obj=this %}
+	{% include "parent_tree.template.html" %}
+	{% endwith %}
 </em>
 <p> {{article.description}} </p>
 
