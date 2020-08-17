@@ -34,7 +34,6 @@ class InitCommand:
         }
         new_file('config.json', json.dumps(config, indent=4))
 
-        new_dir('assets')
         new_dir('articles')
         new_file('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
@@ -52,6 +51,8 @@ This is my personal tiny island in the ocean that is the world wide web.''')
         shutil.copyfile(os.path.join(defaults_dir, 'templates', 'article.template.html'), 'templates')
         shutil.copyfile(os.path.join(defaults_dir, 'templates', 'index.template.html'), 'templates')
         
+        new_dir('assets')
+        shutil.copyfile(os.path.join(defaults_dir, 'assets', 'style.css'), 'assets')
         
     def _fresh_blog_push(self, remote):
         git(['init'])
