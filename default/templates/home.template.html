@@ -11,6 +11,8 @@ This is your personal tiny island in the gigantic ocean that is the world wide w
 </p>
 
 <h3> Articles </h3>
+{% with list_of_articles=articles %}
 {% include "list_of_articles.template.html" %}
+{% endwith %}
 
 {% endblock %}

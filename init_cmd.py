@@ -22,7 +22,7 @@ class InitCommand:
         print('blog successfully initialized')
 
     def _create_base_structure(self):
-        config = { 'blog_title': 'My awesome blog',
+        config = { 'blog_title': 'My awesome Octoblog',
             'url': 'https://[YOUR_USERNAME].github.io',
             'home_template': 'home.template.html',
             'article_template': 'article.template.html',

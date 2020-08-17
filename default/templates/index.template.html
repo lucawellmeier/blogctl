@@ -18,7 +18,7 @@
 {% endfor %}
 
 <h3> Articles: </h3>
-{% with articles=find_articles_in(this) %}
+{% with list_of_articles=find_articles_in(this) %}
 {% include "list_of_articles.template.html" %}
 {% endwith %}
 
