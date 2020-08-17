@@ -1,0 +1,11 @@
+{
+    "blog_title": "My Octoblog/Github Pages blog",
+    "url": "https://YOUR_USERNAME.github.io",
+    "article_template": "article.template.html",
+    "home_template": "home.template.html",
+	"index_template": "index.template.html",
+
+	"articles": {
+		"display_name": "All Articles"
+	}
+}
