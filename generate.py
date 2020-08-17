@@ -92,7 +92,6 @@ def generate_category_index(config, output_dir, environment, category):
     html = template.render(this=category)
 
     export_path = os.path.join(output_dir, category['link'])
-    print(export_path)
     os.makedirs(os.path.dirname(export_path), exist_ok=True)
     with open(export_path, 'w') as f:
         f.write(html)
