@@ -1,0 +1,17 @@
+{% extends "base.template.html" %}
+
+{% block head %}
+<title> {{blog_title}} </title>
+{% endblock %}
+
+{% block main %}
+
+<div class="blog-title"> {{blog_title}} </div>
+
+<div class="blog-description">
+	This is my personal tiny island in the giant ocean that is the world wide web.
+</div>
+
+{% include "list_of_articles.template.html" with list_of_articles=articles %}
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% for article in list_of_articles %}
+
+<h5><a href="{{article.link}}">{{article.title}}</a></h5>
+<em> 
+	published <span class="short-datetime">{{article.changes[0].date}}</span> 
+	(last change: <span class="short-datetime">{{article.changes[-1].date}}</span>
+	in 
+	{% include "parent_tree.template.html" with obj=article %}
+</em>
+<p> {{article.description}} </p>
+
+{% endfor %}

@@ -1,0 +1,4 @@
+<a href="{{obj.home_link}}">Home</a>
+{% for cat in parent_tree_of(obj) %}
+&gt; <a href="{{obj.rootdir}}/{{cat.link}}">{{cat.display_name}}</a>
+{% endfor %}
