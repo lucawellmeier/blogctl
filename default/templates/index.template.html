@@ -14,7 +14,7 @@
 
 <h3> Sub-categories: </h3>
 {% for child in children_of(this) %}
-<a href="{{this.root_dir}}/{{child.link}}">{{child.display_name}}</a> <br>
+<a href="{{child.link}}">{{child.display_name}}</a> <br>
 {% endfor %}
 
 <h3> Articles: </h3>
