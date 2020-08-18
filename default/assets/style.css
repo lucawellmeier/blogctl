@@ -6,11 +6,12 @@ body {
 header {
 	text-align: center;
 	width: 100%;
-	padding: 10px 20px;
+	padding: 10px 0;
 	background: lightgrey;
+	margin-bottom: 10px;
 }
 main {
-	margin-top: 10px;
+	margin: 0 auto;
 	width: 100%;
 }
 footer {
