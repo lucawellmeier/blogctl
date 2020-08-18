@@ -35,7 +35,9 @@ def parent_tree_of(obj, _cats):
     return parent_cats
 
 def children_of(cat, _cats):
-    return [cat for cat in _cats if cat['name'].startswith(cat['name'])]
+    return [other for other in _cats 
+            if other['name'].startswith(cat['name']) 
+            and len(other['name'].split('/')) > len(cat['name'].split('/'))]
 
 def find_articles_in(cat, _arts):
     return [art for art in _arts if os.path.dirname(art['link']) == cat['name']]
