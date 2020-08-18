@@ -27,8 +27,12 @@ def index_blog_structure(config):
 def find_category_meta(config, path):
     meta = {}
     meta['name'] = path
-    meta['display_name'] = config[meta[path]]['display_name'] if 'name' in config and 'display_name' in config['name'] else meta['name']
-    return {**meta, **find_link_info(config, path)}
+    meta['display_name'] = config[path]['display_name'] if path in config and 'display_name' in config[path] else path
+
+    index_path = '/'.join([path, 'index.html'])
+    meta['path'] = index_path
+    meta['link'] = '/'.join([config['url'], index_path])
+    return meta
 
 def find_article_meta(config, path):
     meta = {}
@@ -39,23 +43,12 @@ def find_article_meta(config, path):
     meta['description'] = title_finder.first_paragraph
     meta['content'] = article_html
     meta['changes'] = find_all_commits_for(path)
-    return {**meta, **find_link_info(config, path)}
 
-def find_link_info(config, path):
-    file_path = ''
-    if os.path.isfile(path):
-        file_path = os.path.splitext(path)[0] + '.html'
-        dir_path = os.path.basename(path)
-    if os.path.isdir(path):
-        dir_path = path
-        file_path = '/'.join([dir_path, 'index.html'])
-    
-    link_info = {}
-    link_info['link'] = file_path
-    link_info['root_dir'] = '/'.join(len(dir_path.split('/')) * ['..'])
-    link_info['home_link'] = '/'.join([link_info['root_dir'], 'index.html'])
+    article_path = os.path.splitext(path)[0] + '.html'
+    meta['path'] = article_path
+    meta['link'] = '/'.join([config['url'], article_path])
+    return meta
 
-    return link_info
 
 #################################################
 ## translate templated markdown code into html ##
@@ -91,7 +84,7 @@ def generate_category_index(config, output_dir, environment, category):
     template = environment.get_template(config['index_template'])
     html = template.render(this=category)
 
-    export_path = os.path.join(output_dir, category['link'])
+    export_path = os.path.join(output_dir, category['path'])
     os.makedirs(os.path.dirname(export_path), exist_ok=True)
     with open(export_path, 'w') as f:
         f.write(html)
@@ -101,7 +94,7 @@ def generate_article(config, output_dir, environment, article):
     first_pass = template.render(this=article)
     second_pass = environment.from_string(first_pass).render()
 
-    export_path = os.path.join(output_dir, article['link'])
+    export_path = os.path.join(output_dir, article['path'])
     os.makedirs(os.path.dirname(export_path), exist_ok=True)
     with open(export_path, 'w') as f:
         f.write(second_pass)

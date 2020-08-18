@@ -3,6 +3,7 @@ import os
 def get_globals(config, articles, categories):
     g = {}
     g['blog_title'] = config['blog_title']
+    g['home_link'] = '/'.join([config['url'], 'index.html'])
     g['articles'] = articles
     g['categories'] = categories
 
@@ -19,14 +20,14 @@ def find_category(name, _cats):
     return next(cat for cat in _cats if cat['name'] == name)
 
 def category_of(article, _cats):
-    return find_category(os.path.dirname(article['link']), _cats)
+    return find_category(os.path.dirname(article['path']), _cats)
 
 def parent_tree_of(obj, _cats):
     parent_strings = []
     if 'name' in obj: # category
         parent_strings = obj['name'].split('/')[:-1]
     else: # article
-        parent_strings = os.path.dirname(obj['link']).split('/')
+        parent_strings = os.path.dirname(obj['path']).split('/')
     
     parent_cats = []
     for i in range(len(parent_strings)):
@@ -40,7 +41,7 @@ def children_of(cat, _cats):
             and len(other['name'].split('/')) > len(cat['name'].split('/'))]
 
 def find_articles_in(cat, _arts):
-    return [art for art in _arts if os.path.dirname(art['link']) == cat['name']]
+    return [art for art in _arts if os.path.dirname(art['path']) == cat['name']]
 
 def get_asset(asset_file, _config):
     return '/'.join([_config['url'], 'assets', asset_file])
