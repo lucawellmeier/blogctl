@@ -49,7 +49,6 @@ def find_article_meta(config, path):
     for commit in commits:
         dt = commit['date'].astimezone(tz=datetime.timezone.utc).isoformat()
         meta['changes'].append(dt)
-    print(meta['changes'])
 
     article_path = os.path.splitext(path)[0] + '.html'
     meta['path'] = article_path
