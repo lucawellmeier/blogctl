@@ -6,6 +6,11 @@ from save_cmd import SaveCommand
 
 class PublishCommand:
     def __init__(self):
+        git(['checkout', 'master'])
+        git(['commit', '--allow-empty', '-m', 'octoblog-publish notification'])
+        git(['checkout', 'dev'])
+
+
         print('---> generating blog to www/ directory')
         clear_dir('www')
         config = json.load(open('config.json', 'r'))
@@ -20,7 +25,7 @@ class PublishCommand:
         git(['checkout', 'dev', '--', 'www'])
         flatten('www')
         git(['add', '.'])
-        git(['commit', '-m', '"octoblog-publish"'])
+        git(['commit', '-m', '"octoblog-publish files"'])
         git(['push', 'origin', 'master'])
         git(['checkout', 'dev'])
         print('---> done')

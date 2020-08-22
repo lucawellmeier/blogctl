@@ -4,7 +4,7 @@ import datetime
 import markdown2
 from jinja2 import Environment, FileSystemLoader
 from template_globals import get_globals
-from utils import HTMLTitleFinder, find_all_commits_for
+from utils import HTMLTitleFinder, find_dates, clear_dir
 
 
 ###############################################
@@ -39,16 +39,20 @@ def find_article_meta(config, path):
     meta = {}
 
     article_html = markdown2.markdown(open(path, 'r').read())
+    meta['content'] = article_html
     title_finder = HTMLTitleFinder(article_html)
     meta['title'] = title_finder.headline
     meta['description'] = title_finder.first_paragraph
-    meta['content'] = article_html
     
-    meta['changes'] = []
-    commits = find_all_commits_for(path)
-    for commit in commits:
-        dt = commit['date'].astimezone(tz=datetime.timezone.utc).isoformat()
-        meta['changes'].append(dt)
+    publication_date, last_update = find_dates(path)
+    if publication_date:
+        meta['publication_date'] = publication_date.astimezone(tz=datetime.timezone.utc).isoformat()
+    else:
+        meta['publication_date'] = None 
+    if last_update:
+        meta['last_update'] = last_update.astimezone(tz=datetime.timezone.utc).isoformat()
+    else:
+        meta['last_update'] = None
 
     article_path = os.path.splitext(path)[0] + '.html'
     meta['path'] = article_path
@@ -67,6 +71,7 @@ def generate_html(config, output_dir):
     env = Environment(loader=file_loader)
     env.globals = get_globals(config, articles, categories)
 
+    clear_dir(output_dir)
     generate_home(config, output_dir, env)
 
     for category in categories:
@@ -107,7 +112,7 @@ def generate_article(config, output_dir, environment, article):
 
 def copy_assets(output_dir):
     export_path = os.path.join(output_dir, 'assets')
-    os.makedirs(export_path)
+    os.makedirs(export_path, exist_ok=False)
     
     if os.path.exists(export_path):
         shutil.rmtree(export_path)
