@@ -4,7 +4,7 @@ def get_globals(config, articles, categories):
     g = {}
     g['blog_title'] = config['blog_title']
     g['home_link'] = '/'.join([config['url'], 'index.html'])
-    g['articles'] = articles
+    g['articles'] = [art for art in articles if art['name'] not in config['files_to_ignore_in_queries']]
     g['categories'] = categories
     g['assets'] = '/'.join([config['url'], 'assets'])
 
@@ -12,7 +12,7 @@ def get_globals(config, articles, categories):
     g['category_of'] = lambda article : category_of(article, categories)
     g['parent_tree_of'] = lambda obj : parent_tree_of(obj, categories)
     g['children_of'] = lambda cat : children_of(cat, categories)
-    g['find_articles_in'] = lambda cat : find_articles_in(cat, articles)
+    g['find_articles_in'] = lambda cat : find_articles_in(cat, config, articles)
     g['find_article'] = lambda name : find_article(name, articles)
 
     return g
@@ -34,6 +34,10 @@ def parent_tree_of(obj, _cats):
     for i in range(len(parent_strings)):
         cat_name = '/'.join(parent_strings[:i+1])
         parent_cats.append(find_category(cat_name, _cats))
+
+    if len(parent_cats) > 1:
+        del parent_cats[0]
+
     return parent_cats
 
 def children_of(cat, _cats):
@@ -41,8 +45,8 @@ def children_of(cat, _cats):
             if other['name'].startswith(cat['name']) 
             and len(other['name'].split('/')) > len(cat['name'].split('/'))]
 
-def find_articles_in(cat, _arts):
-    return [art for art in _arts if os.path.dirname(art['path']) == cat['name']]
+def find_articles_in(cat, _conf, _arts):
+    return [art for art in _arts if os.path.dirname(art['name']) == cat['name'] and art['name'] not in _conf['files_to_ignore_in_queries']]
 
 def find_article(name, _arts):
     return next(art for art in _arts if art['path'] == name)

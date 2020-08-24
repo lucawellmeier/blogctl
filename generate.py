@@ -28,7 +28,7 @@ def index_blog_structure(config):
 def find_category_meta(config, path):
     meta = {}
     meta['name'] = path
-    meta['display_name'] = config[path]['display_name'] if path in config and 'display_name' in config[path] else os.path.basename(path)
+    meta['display_name'] = config['category_display_names'][path] if path in config['category_display_names'] else os.path.basename(path)
 
     index_path = '/'.join([path, 'index.html'])
     meta['path'] = index_path
@@ -38,6 +38,7 @@ def find_category_meta(config, path):
 def find_article_meta(config, path):
     meta = {}
 
+    meta['name'] = path
     article_html = markdown2.markdown(open(path, 'r').read())
     meta['content'] = article_html
     title_finder = HTMLTitleFinder(article_html)

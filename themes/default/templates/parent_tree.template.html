@@ -1,4 +1,10 @@
-<a href="{{home_link}}">Home</a>
-{% for cat in parent_tree_of(obj) %}
+{% with parent_tree = parent_tree_of(obj) %}
+
+{% if parent_tree_of(obj)|length > 0 %}
+<a href="{{parent_tree[0].link}}">{{parent_tree[0].display_name}}</a>
+{% for cat in parent_tree_of(obj)[1:] %}
 &gt; <a href="{{cat.link}}">{{cat.display_name}}</a>
 {% endfor %}
+{% endif %}
+
+{% endwith %}

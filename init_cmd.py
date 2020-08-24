@@ -25,16 +25,20 @@ class InitCommand:
         config = { 'blog_title': 'My awesome Octoblog',
             'url': 'https://[YOUR_USERNAME].github.io',
             'theme': 'default',
-
-            'articles': {
-                'display_name': 'Other',
+            'category_display_names': {
+                'articles': 'Others',
             },
+            'files_to_ignore_in_queries': [
+                'articles/about.md',
+            ],
         }
         new_file('config.json', json.dumps(config, indent=4))
 
         new_dir('articles')
         new_file('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
+        new_file('articles/aboud.md', '''# About me
+Here goes your personal information.''')
         new_dir('assets')
         new_dir('www')
         new_dir('preview')
