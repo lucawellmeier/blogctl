@@ -6,13 +6,14 @@ def get_globals(config, articles, categories):
     g['home_link'] = '/'.join([config['url'], 'index.html'])
     g['articles'] = articles
     g['categories'] = categories
+    g['assets'] = '/'.join([config['url'], 'assets'])
 
     g['find_category'] = lambda name : find_category(name, categories)
     g['category_of'] = lambda article : category_of(article, categories)
     g['parent_tree_of'] = lambda obj : parent_tree_of(obj, categories)
     g['children_of'] = lambda cat : children_of(cat, categories)
     g['find_articles_in'] = lambda cat : find_articles_in(cat, articles)
-    g['get_asset'] = lambda asset_file : get_asset(asset_file, config)
+    g['find_article'] = lambda name : find_article(name, articles)
 
     return g
 
@@ -43,5 +44,5 @@ def children_of(cat, _cats):
 def find_articles_in(cat, _arts):
     return [art for art in _arts if os.path.dirname(art['path']) == cat['name']]
 
-def get_asset(asset_file, _config):
-    return '/'.join([_config['url'], 'assets', asset_file])
+def find_article(name, _arts):
+    return next(art for art in _arts if art['path'] == name)
