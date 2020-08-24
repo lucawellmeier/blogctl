@@ -67,7 +67,7 @@ def find_article_meta(config, path):
 def generate_html(config, output_dir):
     articles, categories = index_blog_structure(config)
     
-    file_loader = FileSystemLoader('templates')
+    file_loader = FileSystemLoader(os.path.join('themes', config['theme'], 'templates'))
     env = Environment(loader=file_loader)
     env.globals = get_globals(config, articles, categories)
 
@@ -80,10 +80,10 @@ def generate_html(config, output_dir):
     for article in articles:
         generate_article(config, output_dir, env, article)
     
-    copy_assets(output_dir)
+    copy_assets(config, output_dir)
 
 def generate_home(config, output_dir, environment):
-    template = environment.get_template(config['home_template'])
+    template = environment.get_template('home.template.html')
     html = template.render()
 
     export_path = os.path.join(output_dir, 'index.html')
@@ -92,7 +92,7 @@ def generate_home(config, output_dir, environment):
         f.write(html)
 
 def generate_category_index(config, output_dir, environment, category):
-    template = environment.get_template(config['index_template'])
+    template = environment.get_template('index.template.html')
     html = template.render(this=category)
 
     export_path = os.path.join(output_dir, category['path'])
@@ -101,7 +101,7 @@ def generate_category_index(config, output_dir, environment, category):
         f.write(html)
 
 def generate_article(config, output_dir, environment, article):
-    template = environment.get_template(config['article_template'])
+    template = environment.get_template('article.template.html')
     first_pass = template.render(this=article)
     second_pass = environment.from_string(first_pass).render()
 
@@ -110,11 +110,12 @@ def generate_article(config, output_dir, environment, article):
     with open(export_path, 'w') as f:
         f.write(second_pass)
 
-def copy_assets(output_dir):
+def copy_assets(config, output_dir):
     export_path = os.path.join(output_dir, 'assets')
     os.makedirs(export_path, exist_ok=False)
     
     if os.path.exists(export_path):
         shutil.rmtree(export_path)
 
-    shutil.copytree('assets', export_path)
+    shutil.copytree('assets', export_path, dirs_exist_ok=True)
+    shutil.copytree(os.path.join('themes', config['theme'], 'assets'), export_path, dirs_exist_ok=True)

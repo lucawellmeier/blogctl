@@ -24,12 +24,10 @@ class InitCommand:
     def _create_base_structure(self):
         config = { 'blog_title': 'My awesome Octoblog',
             'url': 'https://[YOUR_USERNAME].github.io',
-            'home_template': 'home.template.html',
-            'article_template': 'article.template.html',
-            'index_template': 'index.template.html',
+            'theme': 'default',
 
             'articles': {
-                'display_name': 'All Articles',
+                'display_name': 'Other',
             },
         }
         new_file('config.json', json.dumps(config, indent=4))
@@ -37,22 +35,14 @@ class InitCommand:
         new_dir('articles')
         new_file('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
+        new_dir('assets')
         new_dir('www')
         new_dir('preview')
         new_file('.gitignore', '''preview/''')
 
-        # copy default files from script execution dir
-        defaults_dir = os.path.join(os.path.dirname(__file__), 'default')
-        new_dir('templates')
-        shutil.copy(os.path.join(defaults_dir, 'templates', 'base.template.html'), 'templates')
-        shutil.copy(os.path.join(defaults_dir, 'templates', 'parent_tree.template.html'), 'templates')
-        shutil.copy(os.path.join(defaults_dir, 'templates', 'list_of_articles.template.html'), 'templates')
-        shutil.copy(os.path.join(defaults_dir, 'templates', 'home.template.html'), 'templates')
-        shutil.copy(os.path.join(defaults_dir, 'templates', 'article.template.html'), 'templates')
-        shutil.copy(os.path.join(defaults_dir, 'templates', 'index.template.html'), 'templates')
-        
-        new_dir('assets')
-        shutil.copy(os.path.join(defaults_dir, 'assets', 'style.css'), 'assets')
+        # copy default theme from script execution dir
+        themes_dir = os.path.join(os.path.dirname(__file__), 'themes')
+        shutil.copy_tree(themes_dir, os.path.join(os.getcwd(), 'themes'))
         
     def _fresh_blog_push(self, remote):
         git(['init'])
