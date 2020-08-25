@@ -22,14 +22,22 @@ class InitCommand:
         print('blog successfully initialized')
 
     def _create_base_structure(self):
-        config = { 'blog_title': 'My awesome Octoblog',
+        config = { 
+            'blog_title': 'My awesome Octoblog',
             'url': 'https://[YOUR_USERNAME].github.io',
             'theme': 'default',
             'category_display_names': {
-                'articles': 'Others',
+                'articles': 'All Articles',
             },
-            'files_to_ignore_in_queries': [
-                'articles/about.md',
+            'menu_items': [
+                {
+                    'title': 'Blog',
+                    'page': 'HOME',
+                },
+                {
+                    'title': 'About',
+                    'page': 'pages/about.md',
+                },
             ],
         }
         new_file('config.json', json.dumps(config, indent=4))
@@ -37,7 +45,8 @@ class InitCommand:
         new_dir('articles')
         new_file('articles/welcome.md', '''# Welcome 
 This is my personal tiny island in the ocean that is the world wide web.''')
-        new_file('articles/aboud.md', '''# About me
+        new_dir('pages')
+        new_file('pages/about.md', '''# About me
 Here goes your personal information.''')
         new_dir('assets')
         new_dir('www')
