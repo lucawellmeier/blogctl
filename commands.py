@@ -2,8 +2,8 @@ import os
 import shutil
 import json
 import subprocess
-from utils import BlogError, new_dir, new_file, git
-from preview_cmd import PreviewCommand
+from utils import BlogError, new_dir, new_file, clear_dir, flatten, git
+from generate import generate_html
 
 class InitCommand:
     def __init__(self, remote):
@@ -69,3 +69,51 @@ Here goes your personal information.''')
         git(['add', '.'])
         git(['commit', '-m', '"initial commit"'])
         git(['push', '-u', 'origin', 'dev'])
+
+class CloneCommand:
+    def __init__(self, remote):
+        git(['clone', remote, '.'])
+        git(['checkout', 'dev'])
+
+class SaveCommand:
+    def __init__(self):
+        print('---> saving to github')
+        git(['pull', '--allow-unrelated-history', 'origin', 'dev'])
+        git(['add', '.'])
+        git(['commit', '-m', 'octoblog-save'])
+        git(['push', 'origin', 'dev'])
+        print('---> done')
+
+class PreviewCommand:
+    def __init__(self):
+        os.makedirs('preview', exist_ok=True)
+        clear_dir('preview')
+        config = json.load(open('config.json', 'r'))
+        config['url'] = 'file:///' + os.getcwd() + '/preview'
+        generate_html(config, 'preview')
+
+class PublishCommand:
+    def __init__(self):
+        git(['checkout', 'master'])
+        git(['commit', '--allow-empty', '-m', 'octoblog-publish notification'])
+        git(['checkout', 'dev'])
+
+
+        print('---> generating blog to www/ directory')
+        clear_dir('www')
+        config = json.load(open('config.json', 'r'))
+        generate_html(config, 'www')
+        print('---> done')
+
+        SaveCommand()
+
+        print('---> pushing contents of www/ to master')
+        git(['checkout', 'master'])
+        clear_dir(os.getcwd())
+        git(['checkout', 'dev', '--', 'www'])
+        flatten('www')
+        git(['add', '.'])
+        git(['commit', '-m', '"octoblog-publish files"'])
+        git(['push', 'origin', 'master'])
+        git(['checkout', 'dev'])
+        print('---> done')

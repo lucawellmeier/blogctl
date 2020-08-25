@@ -4,11 +4,7 @@ import sys
 import argparse
 
 from utils import BlogError
-from init_cmd import InitCommand
-from clone_cmd import CloneCommand
-from preview_cmd import PreviewCommand
-from save_cmd import SaveCommand
-from publish_cmd import PublishCommand
+from commands import InitCommand, CloneCommand, SaveCommand, PreviewCommand, PublishCommand
 
 class CLI:
     def __init__(self):
