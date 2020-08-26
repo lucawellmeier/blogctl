@@ -1,0 +1,21 @@
+{% extends "base.template.html" %}
+
+{% block head %}
+<title> Archives | {{blog_title}} </title>
+{% endblock %}
+
+{% block main %}
+
+<h1> Archives </h1>
+
+<h3> by Category </h3>
+{% for c in all_categories %}
+<a href="{{c.link}}">{{c.display_name}}</a><br>
+{% endfor %}
+
+<h3> by Month </h3>
+{% for m in all_months %}
+<a href="{{m.link}}">{{m.display_name}}</a><br>
+{% endfor %}
+
+{% endblock %}

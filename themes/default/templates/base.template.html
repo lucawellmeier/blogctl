@@ -8,14 +8,27 @@
 </head>
 <body>
 	<header>
-		<h3> {{blog_title}} </h3>
+		<div class="container">
+			<h1> {{blog_title}} </h1>
+			<nav>
+				{% for item in menu_items %}
+					{% if this.active_menu_item == item.page %}
+						<a href="{{item.link}}" class="active-menu-item">{{item.title}}</a>
+					{% else %}
+						<a href="{{item.link}}">{{item.title}}</a>
+					{% endif %}
+				{% endfor %}
+			</nav>
+		</div>
 	</header>
-	<main>
+	<div class="container">
 		{% block main %}{% endblock %}
-	</main>
+	</div>
 	<footer>
-		Powered by <a href="https://pages.github.com">Github Pages</a>
-		and <a href="https://github.com/lucawellmeier/octoblog">Octoblog</a>
+		<div class="container">
+			Powered by <a href="https://pages.github.com">Github Pages</a>
+			and <a href="https://github.com/lucawellmeier/octoblog">Octoblog</a>
+		</div>
 	</footer>
 
 	<script src="{{assets}}/datetime_formatter.js"></script>

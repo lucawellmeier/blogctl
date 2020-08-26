@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from html.parser import HTMLParser
 
 ################################
@@ -78,15 +78,16 @@ def parse_commit_log(log):
     for raw_commit in raw_commits:
         date_line = raw_commit[2] # line which contains the commit date
         date_string = re.match(r'^\s*Date:\s*(.+)\s*$', date_line).group(1)
-        commits.append(datetime.strptime(date_string, '%c %z'))
+        dt = datetime.strptime(date_string, '%c %z')
+        commits.append(dt.astimezone(tz=timezone.utc))
 
     return sorted(commits)
 
-# searches the commit history of a given file for publication date and last update
+# searches the commit history of a given file for publication date and last updates
 def find_dates(article_file):
     add_commits = parse_commit_log(git(['log', '--diff-filter=A', '--', article_file]))
     if not add_commits:
-        return None, None
+        return []
 
     first_commit_date = add_commits[0]
 
@@ -95,18 +96,14 @@ def find_dates(article_file):
     git(['checkout', 'dev'])
 
     if not publications_after_commit:
-        return None, None
-    publication_date = publications_after_commit[0]
+        return [] 
 
-    all_updates_log = git(['log', '--follow', '--since', '"' + publication_date.isoformat() + '"', '--', article_file])
-    if not all_updates_log:
-        return publication_date, None
-    last_update = parse_commit_log(all_updates_log)[-1]
+    all_changes = []
+    all_changes.append(publications_after_commit[0])
 
-    if last_update == publication_date:
-        return publication_date, None
-
-    return publication_date, last_update
+    all_updates_log = git(['log', '--follow', '--after', '"' + all_changes[0].isoformat() + '"', '--', article_file])
+    all_changes.extend(parse_commit_log(all_updates_log))
+    return all_changes
 
 #################
 ## html helper ##

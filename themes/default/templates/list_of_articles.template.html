@@ -4,8 +4,11 @@
 <li>
 <h4><a href="{{article.link}}">{{article.title}}</a></h4>
 <em> 
-	published <span class="short-datetime">{{article.publication_date}}</span> 
-	(last change: <span class="short-datetime">{{article.last_update}}</span>)
+	published <span class="short-datetime">{{article.changes[0].isoformat()}}</span> 
+	{% if article.changes|length > 1 %}
+	(last change: <span class="short-datetime">{{article.changes[-1].isoformat()}}</span>)
+	{% endif %}
+
 	in 
 	{% with obj=article %}
 	{% include "parent_tree.template.html" %}

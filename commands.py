@@ -32,7 +32,11 @@ class InitCommand:
             'menu_items': [
                 {
                     'title': 'Blog',
-                    'page': 'HOME',
+                    'page': 'BLOG_HOME',
+                },
+                {
+                    'title': 'Archives',
+                    'page': 'BLOG_ARCHIVES',
                 },
                 {
                     'title': 'About',

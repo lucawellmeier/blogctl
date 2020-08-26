@@ -10,12 +10,14 @@
 {% include "parent_tree.template.html" %}
 {% endwith %}
 
-<h1> Category: {{this.display_name}} </h1>
+<h1> Collection: {{this.display_name}} </h1>
 
-<h3> Sub-categories: </h3>
+{% if children_of(this)|length > 0 %}
+<h3> Sub-collections: </h3>
 {% for child in children_of(this) %}
 <a href="{{child.link}}">{{child.display_name}}</a> <br>
 {% endfor %}
+{% endif %}
 
 <h3> Articles: </h3>
 {% with list_of_articles=find_articles_in(this) %}

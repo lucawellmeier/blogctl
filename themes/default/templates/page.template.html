@@ -1,0 +1,17 @@
+{% extends "base.template.html" %}
+
+{% block head %}
+<title> {{this.title}} | {{blog_title}} </title>
+{% endblock %}
+
+{% block main %}
+
+{% with obj=this %}
+{% include "parent_tree.template.html" %}
+{% endwith %}
+
+<article>
+{{this.content}}
+</article>
+
+{% endblock %}

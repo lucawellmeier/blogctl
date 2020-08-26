@@ -1,11 +1,13 @@
 import os
 
-def get_globals(config, articles, categories, pages):
+def get_globals(config, articles, categories, months, pages):
     g = {}
     g['blog_title'] = config['blog_title']
     g['home_link'] = '/'.join([config['url'], 'index.html'])
-    g['articles'] = articles
-    g['categories'] = categories
+    g['archives_link'] = '/'.join([config['url'], 'archives', 'index.html'])
+    g['all_articles'] = articles
+    g['all_categories'] = categories
+    g['all_months'] = months
     g['pages'] = pages
     g['assets'] = '/'.join([config['url'], 'assets'])
 
@@ -16,6 +18,8 @@ def get_globals(config, articles, categories, pages):
         item['page'] = config['menu_items'][i]['page']
         if config['menu_items'][i]['page'] == 'BLOG_HOME':
             item['link'] = g['home_link']
+        elif config['menu_items'][i]['page'] == 'BLOG_ARCHIVES':
+            item['link'] = g['archives_link']
         else:
             item['link'] = find_page(config['menu_items'][i]['page'], pages)['link']
         menu_items.append(item)
@@ -24,8 +28,8 @@ def get_globals(config, articles, categories, pages):
     g['find_category'] = lambda name : find_category(name, categories)
     g['category_of'] = lambda article : category_of(article, categories)
     g['parent_tree_of'] = lambda obj : parent_tree_of(obj, categories)
-    g['children_of'] = lambda cat : children_of(cat, categories)
-    g['find_articles_in'] = lambda cat : find_articles_in(cat, config, articles)
+    g['children_of'] = lambda coll : children_of(coll, categories)
+    g['find_articles_in'] = lambda coll : find_articles_in(coll, config, articles)
     g['find_article'] = lambda name : find_article(name, articles)
     g['find_page'] = lambda name : find_page(name, pages)
 
@@ -39,8 +43,11 @@ def category_of(article, _cats):
 
 def parent_tree_of(obj, _cats):
     parent_strings = []
-    if 'name' in obj: # category
-        parent_strings = obj['name'].split('/')[:-1]
+    if 'collection_type' in obj: # category or month
+        if obj['collection_type'] == 'category':
+            parent_strings = obj['name'].split('/')[:-1]
+        else:
+            return []
     else: # article
         parent_strings = os.path.dirname(obj['path']).split('/')
     
@@ -54,13 +61,18 @@ def parent_tree_of(obj, _cats):
 
     return parent_cats
 
-def children_of(cat, _cats):
+def children_of(coll, _cats):
+    if coll['collection_type'] != 'category':
+        return []
     return [other for other in _cats 
-            if other['name'].startswith(cat['name']) 
-            and len(other['name'].split('/')) > len(cat['name'].split('/'))]
+            if other['name'].startswith(coll['name']) 
+            and len(other['name'].split('/')) > len(coll['name'].split('/'))]
 
-def find_articles_in(cat, _conf, _arts):
-    return [art for art in _arts if os.path.dirname(art['name']) == cat['name']]
+def find_articles_in(coll, _conf, _arts):
+    if coll['collection_type'] == 'category':
+        return [art for art in _arts if os.path.dirname(art['name']) == coll['name']]
+    else: # month
+        return [art for art in _arts if art['changes'] and art['changes'][0].timestamp() >= coll['start'] and art['changes'][0].timestamp() < coll['end']]
 
 def find_article(name, _arts):
     return next(art for art in _arts if art['name'] == name)
