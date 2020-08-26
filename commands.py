@@ -24,12 +24,13 @@ class InitCommand:
     def _create_base_structure(self):
         config = { 
             'blog_title': 'My awesome Octoblog',
-            'url': 'https://[YOUR_USERNAME].github.io',
-            'theme': 'default',
-            'category_display_names': {
+            'url': 'https://[YOUR USERNAME].github.io',
+            'theme': 'plain',
+            'category_titles': {
                 'articles': 'All Articles',
+                'articles/italian': 'Italian'
             },
-            'menu_items': [
+            'menu': [
                 {
                     'title': 'Blog',
                     'page': 'BLOG_HOME',
