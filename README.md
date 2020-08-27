@@ -76,25 +76,54 @@ We go through all the components' purposes by example.
 
 ### Posting articles
 
-We want to post two articles, `hello.md` and `ciao.md`, say, with contents
+We want to post two articles, `hello.md` and `hallo.md`, say, with contents
 ```
 -- hello.md
-\# Hello there
+# Hello there
 How are you?
 
 -- ciao.md
-\# Hallo Freundchen
+# Hallo Freundchen
 Wie geht's?
 ```
-Put `hello.md` into `articles/` and then run `octoblog preview`. The tool will freshly build
-the whole blog and put it into `.cache/preview/`. Open the `index.html` file in there in your
-browser to view the result.
+`hello.md` should go into "All Articles" so we put it into `articles/`, while `hallo.md` should go
+into a new category `Articles written in German`. For the latter create a new directory
+`articles/german/` and move the file there. The new categorie's default name will simply be
+`german`. To alter the displayed title open `config.json` in a text editor and place the new line
+```
+'articles/german': 'Articles written in German'
+```
+under `category_titles`. Don't forget to seperate it by a comma.
 
-The first Markdown header will be the article title and the first paragraph its short description.
+Now we are ready to publish. First, run `octoblog preview` to verify your changes without 
+publishing. The tool will freshly build the whole blog and put it into `.cache/preview/`. Open the 
+`index.html` file in there in your browser to view the result.
 
-Note that both new articles have an "Invalid Date" message instead of a publishing date. 
+You will see a list of articles, the two most recent being our newly added ones. Note that the 
+first Markdown header will be the article title and the first paragraph its short description.
+
+Note also that both new articles have an "Invalid Date" message instead of a publishing date. 
 This changes as soon as we run `octoblog publish`. All your changes will be online a few moments 
 after that and can be found on your GitHub Pages URL.
+
+### Add a new page to the main menu
+
+Let's assume you wanted to add a "My Projects" page to the menu. Create the file:
+```
+-- pages/projects.md
+# My Projects
+
+Here is a list of my projects:
+ - (Learning Italian)[1]
+ - (Doing weird things)[2]
+ - (Greeting people in German)[3]
+
+ If you have any questions email me at [this-is@not-a-real-mail.com]
+
+[1]: {{find('ARCHIVES:articles/italien').link}}
+[2]: https://github.com/lucawellmeier/octoblog
+[3]: {{find('ARCHIVES:articles/german').link}}
+```
 
 ## Customizing your theme
 
