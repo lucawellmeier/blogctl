@@ -125,32 +125,26 @@ Then, add it to the `menu` section in the config file like this:
 ```
 -- config.js
 ...
-
 'menu': [
-	{
-		'title': 'Blog',
-		'page': 'BLOG:'
-	},
-	{
-		'title': 'Archives',
-		'page': 'ARCHIVE:'
-	},
+	...
 	{
 		'title': 'About',
 		'page': 'PAGE:about.md'
 	},
-	========================>
 	{
 		'title': 'Projects',
 		'page': 'PAGE:projects.md'
 	}
-	<========================
 ]
-
 ...
 ```
 
-and we are done. In the next `octoblog preview` or `octoblog publish`.
+and we are done. After the next `octoblog preview` or `octoblog publish` you will see the 
+"Projects" tab in the main menu.
+
+### Adding assets (images, scripts, ...) to articles
+
+
 
 ## Customizing your theme
 
