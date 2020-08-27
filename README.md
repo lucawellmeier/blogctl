@@ -15,7 +15,7 @@ Features:
 ## Setup
 
 **Note:** The tool is currently only tested on Linux. Due to heavy usage of Linux-style paths
-I dought that it will be usable on Windows as-is, but support will be probably be added soon.
+I doubt that it will be usable on Windows as-is, but support will be probably added in the future.
 If you are interested in Windows support you can create an issue to increase priority.
 
 Requirements:
@@ -25,7 +25,7 @@ Requirements:
  - libraries `markdown2` and `jinja2` (installable via `pip`)
 
 Make sure you have a working GitHub pages repo (just create a new GitHub repository named
-`<YOUR USERNAME>.github.io`) and backup and clear it to avoid possible file conflicts.
+`<YOUR USERNAME>.github.io`) and that it is cleared to avoid possible file conflicts.
 
 After cloning the `octoblog` repo, you can run the tool through
 ```
@@ -37,21 +37,20 @@ my `PATH`. Thus, in the following I instead use:
 octoblog [ARGUMENTS]
 ```
 
-Next, create a directory which shall contain the blog and run:
+Next, create a directory which shall contain the blog data and config and run:
 ```
 mkdir myblog
 cd myblog
 octoblog init <REMOTE URL>
 ```
-`<REMOTE URL>` is the URL of the GitHub repository (should be ending in `.git`)
-This will create the basic file structure containing an example article page and the
+`<REMOTE URL>` is the URL of the GitHub repository (should be ending in `.git`).
+This will create the basic file structure containing an articles and pages and the
 default theme.
 
 If you want to restore an existing *octoblog* run `octoblog clone <REMOTE URL>`.
 
 Finally, Open `config.json` in a text editor and correct the field `url` by inserting your 
 GitHub username.
-
 *octoblog* is now set up and you are ready to spread your word.
 
 ## Usage
@@ -73,18 +72,29 @@ myblog/
 			...
 ```
 
-All posts go to `articles`. You can create sub-directories in there to categorize
-your articles. The default category name will be the directory name but it can be altered
-in the config file under `category_titles`.
+We go through all the components' purposes by example.
 
-Be aware that in article listings the first header and the first paragraph will be used as article 
-title and description, respectively.
+### Posting articles
 
-Static pages go to `pages`. These can be accessed in the `menu` field of the config file or through
-a query function (see below).
+We want to post two articles, `hello.md` and `ciao.md`, say, with contents
+```
+-- hello.md
+\# Hello there
+How are you?
 
-Images, documents, ... go to `assets`. Inside markdown the url of this folder can be accessed 
-through the Jinja2 global variable `ASSETS` (`{{ASSETS}}/example.png`, for example).
+-- ciao.md
+\# Hallo Freundchen
+Wie geht's?
+```
+Put `hello.md` into `articles/` and then run `octoblog preview`. The tool will freshly build
+the whole blog and put it into `.cache/preview/`. Open the `index.html` file in there in your
+browser to view the result.
+
+The first Markdown header will be the article title and the first paragraph its short description.
+
+Note that both new articles have an "Invalid Date" message instead of a publishing date. 
+This changes as soon as we run `octoblog publish`. All your changes will be online a few moments 
+after that and can be found on your GitHub Pages URL.
 
 ## Customizing your theme
 
