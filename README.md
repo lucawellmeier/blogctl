@@ -25,25 +25,25 @@ Requirements:
  - libraries `markdown2` and `jinja2` (installable via `pip`)
 
 Make sure you have a working GitHub pages repo (just create a new GitHub repository named
-`<YOUR USERNAME>.github.io`) and that it is cleared to avoid possible file conflicts.
+`<YOUR USERNAME>.github.io`) and that it is empty to avoid possible file conflicts later.
 
 After cloning the `octoblog` repo, you can run the tool through
 ```
 python /path/to/cloned-repo/octoblog.py [ARGUMENTS].
 ```
-However, I prefer to make it executable and create a symlink to `octoblog.py` somewhere in
-my `PATH`. Thus, in the following I instead use:
+However, I prefer to make it executable and create a symlink to `octoblog.py` named `octoblog`
+somewhere in my `PATH`. Thus, in the following I instead use:
 ```
 octoblog [ARGUMENTS]
 ```
 
-Next, create a directory which shall contain the blog data and config and run:
+Next, to create a set up a directory which shall contain the blog data and config and run:
 ```
 mkdir myblog
 cd myblog
 octoblog init <REMOTE URL>
 ```
-`<REMOTE URL>` is the URL of the GitHub repository (should be ending in `.git`).
+The `<REMOTE URL>` is the URL of the GitHub repository (should be ending in `.git`).
 This will create the basic file structure containing an articles and pages and the
 default theme.
 
@@ -55,14 +55,12 @@ GitHub username.
 
 ## Usage
 
-The basic directory structures looks like this:
+The basic directory structures created by the `init` command looks like this:
 ```
 myblog/
 	config.json
 	articles/
 		welcome.md
-		italian/
-			buongiorno.md
 	pages/
 		about.md
 	assets/
@@ -72,7 +70,7 @@ myblog/
 			...
 ```
 
-We go through all the components' purposes by example.
+We go through all the tools' features by example.
 
 ### Posting articles
 

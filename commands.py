@@ -28,16 +28,16 @@ class InitCommand:
             'theme': 'plain',
             'category_titles': {
                 'articles': 'All Articles',
-                'articles/italian': 'Italian'
+                'articles/italian': 'Articles written in Italian'
             },
             'menu': [
                 {
                     'title': 'Blog',
-                    'page': 'BLOG_HOME',
+                    'page': 'BLOG',
                 },
                 {
                     'title': 'Archives',
-                    'page': 'BLOG_ARCHIVES',
+                    'page': 'ARCHIVES',
                 },
                 {
                     'title': 'About',
