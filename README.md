@@ -112,16 +112,45 @@ Let's assume you wanted to add a "My Projects" page to the menu. Create the file
 # My Projects
 
 Here is a list of my projects:
- - (Learning Italian)[1]
- - (Doing weird things)[2]
- - (Greeting people in German)[3]
+ - [Doing weird things][1]
+ - [Greeting people in German][1]
 
- If you have any questions email me at [this-is@not-a-real-mail.com]
+If you have any questions email me at [this-is@not-a-real-mail.com][]
 
-[1]: {{find('ARCHIVES:articles/italien').link}}
-[2]: https://github.com/lucawellmeier/octoblog
-[3]: {{find('ARCHIVES:articles/german').link}}
+[1]: https://github.com/lucawellmeier/octoblog
+[2]: {{get('ARCHIVE:articles/german').link}}
 ```
+
+Then, add it to the `menu` section in the config file like this:
+```
+-- config.js
+...
+
+'menu': [
+	{
+		'title': 'Blog',
+		'page': 'BLOG:'
+	},
+	{
+		'title': 'Archives',
+		'page': 'ARCHIVE:'
+	},
+	{
+		'title': 'About',
+		'page': 'PAGE:about.md'
+	},
+	========================>
+	{
+		'title': 'Projects',
+		'page': 'PAGE:projects.md'
+	}
+	<========================
+]
+
+...
+```
+
+and we are done. In the next `octoblog preview` or `octoblog publish`.
 
 ## Customizing your theme
 
